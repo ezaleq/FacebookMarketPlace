@@ -48,7 +48,7 @@ class FacebookWrapper
             * @var $buttonElement RemoteWebElement
          */
         $this->driver->get("https://www.facebook.com/");
-        $webdriver = new WebDriverWait($this->driver, 10);
+        $webdriver = new WebDriverWait($this->driver, 30);
 
         $emailElement = $webdriver->until(EC::presenceOfElementLocated(By::cssSelector("input[name='email']")));
         $emailElement->sendKeys($email);
@@ -147,16 +147,17 @@ class FacebookWrapper
      * @throws NoSuchElementException
      * @throws TimeoutException
      */
-    public function publishProduct(Product $product): string
+    public function publishProduct(Product $product): void
     {
+        $waiter = new WebDriverWait($this->driver, 60);
         $this->driver->get("https://www.facebook.com/marketplace/create/item");
         $this->fillFields($product);
 
         $nextBtn = $this->driver->findElement(By::xpath("//span[text()='Next']"));
         $nextBtn->click();
 
-
-        return "";
+        $publishBtn = $waiter->until(EC::presenceOfElementLocated(By::xpath("//span[text()='Publish']")));
+        $publishBtn->click();
     }
 
     public function quit(): void
